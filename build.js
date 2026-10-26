@@ -11,6 +11,12 @@ const isLocal = src => !/^(https?:)?\/\//.test(src);
 // kodun içindeki aynı metinler şablonla karışmasın diye "<" kaçışlanır (\x3c = "<").
 const safe = js => js.replace(/<\/script/gi, '<\\/script').replace(/<(\/?)x-dc/g, '\\x3c$1x-dc');
 
+// Önce soru havuzunu denetle: cevabı şık uzunluğundan tahmin edilebilen soru yayına çıkmasın
+if (!require('./check-questions')(path.join(ROOT, 'sd-bundle.js'))) {
+  console.error('Soru denetimi başarısız; yukarıdaki soruları düzeltip tekrar deneyin.');
+  process.exit(1);
+}
+
 let html = read('index.html');
 
 // support.js açılışta sayfanın ham kaynağını fetch(location.href) ile okur (tarayıcının

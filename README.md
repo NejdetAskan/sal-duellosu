@@ -39,4 +39,13 @@ node build.js
 - `styles.css` — tasarım sistemi renkleri/yazı tipi
 - `vendor/` — React 18.3.1, ReactDOM 18.3.1, PeerJS 1.5.4
 - `server.js` — basit statik sunucu
-- `build.js` — tek dosyalık sürümü `dist/` içine üretir
+- `build.js` — tek dosyalık sürümü `dist/` içine üretir (önce soru denetimini çalıştırır)
+- `check-questions.js` — soru havuzu denetimi: doğru şık uzunluğundan ya da "her zaman / hiç" gibi kelimelerden tahmin edilemesin
+
+## Soru eklerken
+
+Sorular `sd-bundle.js` içindeki `QUESTIONS` dizisindedir; doğru şık her zaman ilk sıraya (`a: 0`) yazılır, oyunda karıştırılır. Şıkları benzer uzunlukta ve aynı kalıpta yazın; yanlış şıklar öğrencinin gerçekten karıştırabileceği kavramlar olsun. Ekledikten sonra:
+
+```bash
+node check-questions.js --detay
+```
