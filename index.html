@@ -72,7 +72,7 @@ button:disabled{cursor:not-allowed;}
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));min-height:calc(100vh - 58px)">
   <div style="display:flex;flex-direction:column;border-right:2px solid var(--color-text);min-width:0">
     <div style="padding:40px 40px 28px;display:flex;flex-direction:column;gap:18px">
-      <div style="font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-accent-700)">Yapay Zeka · Mobil Uygulama · 1–4. hafta · Vize tekrarı</div>
+      <div style="font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-accent-700)">Yapay Zeka · Mobil Uygulama · 1–5. hafta · Vize tekrarı</div>
       <h1 style="margin:0;font-size:clamp(48px,7vw,96px);font-weight:900;line-height:0.92;letter-spacing:-0.035em">Bil, altın kazan,<br>batır.</h1>
       <p style="margin:0;max-width:600px;font-size:18px;line-height:1.5;color:var(--color-neutral-800);text-wrap:pretty">Öğr. Gör. Erdi YALÇIN'ın ders notlarındaki konulardan sorular. Herkes aynı soruyu aynı anda cevaplar; doğru bilen altın kazanır ve salından atış yapar. Altınla dükkandan bomba, roket ve sal yükseltmesi alırsın. 1'e 1 ya da 2'ye 2 takım halinde oynanır.</p>
     </div>
@@ -529,7 +529,7 @@ class Component extends DCLogic {
     if (!this.N) return;
     this.reset();
     const code = this.newCode();
-    this.G = { mode: '1v1', course: 'yz', cls: this.boardCode(), weeks: [1, 2, 3, 4], phase: 'lobby', players: [this.newPlayer('host', this.myName(), 0, 0, false)], hp: [100, 100], max: [100, 100], up: [false, false], qi: 0, log: [], ans: {}, answered: [], gains: {}, qPref: this.props.soruSayisi ?? 15 };
+    this.G = { mode: '1v1', course: 'yz', cls: this.boardCode(), weeks: this.Q.WEEKS.filter(w => w.ready && w.c === 'yz').map(w => w.n), phase: 'lobby', players: [this.newPlayer('host', this.myName(), 0, 0, false)], hp: [100, 100], max: [100, 100], up: [false, false], qi: 0, log: [], ans: {}, answered: [], gains: {}, qPref: this.props.soruSayisi ?? 15 };
     this.setState({ busy: true, role: 'host', code, myId: 'host', net: 'connecting', joinError: '' });
     this.pushSnap();
     this.setState({ screen: 'room' });
@@ -895,7 +895,8 @@ class Component extends DCLogic {
         onClick: () => setWeeks(sel ? g.weeks.filter(x => x !== w.n) : [...g.weeks, w.n].sort((a, b) => a - b)) };
     };
     const cells = CW.filter(w => w.ready).map(cell);
-    cells.push({ num: '1–4', title: 'Tüm haftalar', tags: 'Dört haftadan karışık sorular. Vize provası için.', state: allSel ? 'Seçildi' : 'Hepsi', count: `${CQ.length} soruluk havuz`,
+    const readyD = CW.filter(w => w.ready).map(w => w.d);
+    cells.push({ num: readyD.length ? `${Math.min(...readyD)}–${Math.max(...readyD)}` : '—', title: 'Tüm haftalar', tags: `${readyD.length} haftadan karışık sorular. Vize provası için.`, state: allSel ? 'Seçildi' : 'Hepsi', count: `${CQ.length} soruluk havuz`,
       bg: allSel ? 'var(--color-text)' : 'var(--color-bg)', fg: allSel ? 'var(--color-bg)' : 'var(--color-text)', cursor: host ? 'pointer' : 'default', opacity: 1, disabled: !host, onClick: () => setWeeks(allSel ? [] : CR.slice()) });
     CW.filter(w => !w.ready).forEach(w => cells.push(cell(w)));
     const full = g.players.length >= spt * 2, total = QS.filter(q => g.weeks.includes(q.w)).length, pref = g.qPref || 15, n = Math.min(pref, total);
