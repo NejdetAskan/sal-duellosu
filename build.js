@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = __dirname;
-const read = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
+const read = f => fs.readFileSync(path.join(ROOT, f.split('?')[0]), 'utf8'); // ?v=… önbellek kırıcıyı at
 const isLocal = src => !/^(https?:)?\/\//.test(src);
 // support.js sayfa kaynağında ilk "<x-dc" ve son "</x-dc>" metnini arar; gömülü
 // kodun içindeki aynı metinler şablonla karışmasın diye "<" kaçışlanır (\x3c = "<").
@@ -32,7 +32,7 @@ const shim = `<script>/* file:// için ham kaynak */
 html = html.replace(/<script src="([^"]+)"><\/script>/g, (tag, src) =>
   isLocal(src) ? `<script>/* ${src} */\n${safe(read(src))}\n</script>` : tag);
 
-html = html.replace('<script>/* ./support.js */', shim + '<script>/* ./support.js */');
+html = html.replace(/<script>\/\* \.\/support\.js[^*]*\*\//, m => shim + m);
 
 html = html.replace(/<link rel="stylesheet" href="([^"]+)">/g, (tag, href) =>
   isLocal(href) ? `<style>/* ${href} */\n${read(href)}\n</style>` : tag);
